@@ -18,6 +18,10 @@ package org.springframework.amqp.support.converter;
 
 import org.springframework.amqp.core.MessageProperties;
 
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.type.TypeFactory;
+
+
 /**
  * Strategy for setting metadata on messages such that one can create the class
  * that needs to be instantiated when receiving a message.
@@ -31,4 +35,13 @@ public interface ClassMapper {
 	void fromClass(Class<?> clazz, MessageProperties properties);
 
 	Class<?> toClass(MessageProperties properties);
+
+
+	default JavaType constructJavaType(MessageProperties messageProperties) {
+		return TypeFactory.defaultInstance().constructType(toClass(messageProperties));
+	}
+	default void fromClass(Class<?> clazz, Object body, MessageProperties properties) {
+		fromClass(clazz, properties);
+	}
+
 }
